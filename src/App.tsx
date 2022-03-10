@@ -1,21 +1,28 @@
 import './App.css';
 import React from 'react';
-import {
-  usePlants,
-  usePlant,
-  addPlant,
-  updatePlant,
-  deletePlant,
-} from './state-handlers/_none';
+import * as none from './state-handlers/_none';
+import * as recoil from './state-handlers/recoil';
+
+
+
+let store: any = none
+switch (window.location.pathname) {
+  case '/recoil':
+    console.log('[INFO] Using Recoil')
+    store = recoil;
+    break;
+  default:
+    console.log('[INFO] Using no state management')
+    break;
+}
 
 function App() {
-  const plants = usePlants();
+  const plants = store.usePlants();
 
   return (
     <div style={{ padding: 30 }}>
       <div>
         <h1>Plant directory</h1>
-        <h3>Currently using: hookstate.ts</h3>
         <p>Open your console!</p>
         <AddButton />
       </div>
@@ -28,7 +35,7 @@ function App() {
         }}
       >
         {Object.keys(plants).map((plantId) => {
-          return <Item id={plantId} />;
+          return <Item id={plantId} key={plantId}/>;
         })}
       </div>
     </div>
@@ -36,7 +43,7 @@ function App() {
 }
 
 function Item(props: { id: string }) {
-  const plant = usePlant(props.id);
+  const plant = store.usePlant(props.id);
   return (
     <div
       style={{
@@ -58,6 +65,7 @@ function Item(props: { id: string }) {
 
 function AddButton() {
   const [name, setName] = React.useState('');
+  const addPlant = store.useAddPlant();
   return (
     <div>
       <input
@@ -79,35 +87,35 @@ function AddButton() {
 }
 
 function DeleteButton(props: { id: string }) {
+  const deletePlant = store.useDeletePlant(props.id);
   return (
     <button
       type="button"
       onClick={() => {
-        deletePlant(props.id);
+        deletePlant();
       }}
     >
       Delete
     </button>
   );
 }
-
 function UpdateButton(props: { id: string; name: string }) {
-  const [name, setName] = React.useState('');
+  const [name, setName] = React.useState(props.name);
   const [isEditing, setIsEditing] = React.useState(false);
+  const updatePlant = store.useUpdatePlant(props.id);
   return (
-    <div style={{marginBottom: 10}}>
+    <div style={{ marginBottom: 10 }}>
       {isEditing ? (
         <div>
           <input
             type="text"
             value={name}
-            defaultValue={name}
             onChange={(e) => setName(e.target.value)}
           />
           <button
             type="button"
             onClick={() => {
-              updatePlant(props.id, { name });
+              updatePlant({ name });
               setIsEditing(false);
               setName('');
             }}

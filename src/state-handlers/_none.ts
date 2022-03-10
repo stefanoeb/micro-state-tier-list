@@ -6,7 +6,7 @@ export interface Plant {
 
 export type Plants = Record<string, Plant>;
 
-let plants: Record<string, { name: string }> = data;
+let plants: Record<string, { name: string }> = { ...data };
 
 /*
  * CONTRACT BETWEEN STORE AND COMPONENT - DO NOT MODIFY THE PARAMETERS OR RETURN SHAPE
@@ -19,17 +19,23 @@ export function usePlant(id: string) {
   return plants[id];
 }
 
-export function addPlant(plant: Plant) {
-  const id = generateNextId(plants);
-  plants[id] = plant;
+export function useAddPlant() {
+  return (plant: Plant) => {
+    const id = generateNextId(plants);
+    plants[id] = plant;
+  };
 }
 
-export function deletePlant(id: string) {
-  delete plants[id];
+export function useDeletePlant(id: string) {
+  return () => {
+    delete plants[id];
+  };
 }
 
-export function updatePlant(id: string, plant: Partial<Plant>) {
-  plants[id] = { ...plants[id], ...plant };
+export function useUpdatePlant(id: string) {
+  return (plant: Partial<Plant>) => {
+    plants[id] = { ...plants[id], ...plant };
+  };
 }
 
 /**
