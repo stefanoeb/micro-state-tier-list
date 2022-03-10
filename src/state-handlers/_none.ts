@@ -11,6 +11,9 @@ let plants: Record<string, { name: string }> = { ...data };
 /*
  * CONTRACT BETWEEN STORE AND COMPONENT - DO NOT MODIFY THE PARAMETERS OR RETURN SHAPE
  */
+
+export function useFetchInitialData() {}
+
 export function usePlants() {
   return plants;
 }
@@ -43,5 +46,5 @@ export function useUpdatePlant(id: string) {
  */
 
 export function generateNextId(collection: Record<string, any>) {
-  return Math.max(...Object.keys(collection).map(Number)) + 1;
+  return (Math.max(...Object.keys(collection).map(Number), 0) + 1).toString();
 }

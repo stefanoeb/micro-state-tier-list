@@ -18,7 +18,7 @@ switch (window.location.pathname) {
 
 function App() {
   const plants = store.usePlants();
-
+  store.useFetchInitialData()
   return (
     <div style={{ padding: 30 }}>
       <div>
@@ -42,7 +42,7 @@ function App() {
   );
 }
 
-function Item(props: { id: string }) {
+const Item = React.memo(function (props: { id: string }) {
   const plant = store.usePlant(props.id);
   return (
     <div
@@ -61,7 +61,7 @@ function Item(props: { id: string }) {
       <DeleteButton id={props.id} />
     </div>
   );
-}
+})
 
 function AddButton() {
   const [name, setName] = React.useState('');
@@ -69,6 +69,7 @@ function AddButton() {
   return (
     <div>
       <input
+        style={{marginRight: 10}}
         type="text"
         value={name}
         onChange={(e) => setName(e.target.value)}

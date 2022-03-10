@@ -1,50 +1,87 @@
-import { atom, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useEffect } from 'react';
+import {
+  atom,
+  atomFamily,
+  useRecoilCallback,
+  useRecoilState,
+  useRecoilValue,
+  useResetRecoilState,
+  useSetRecoilState,
+} from 'recoil';
 import data from '../data.json';
 import { generateNextId, Plant, Plants } from './_none';
 
-const plantsState = atom<Plants>({
+const plantsState = atomFamily<Plant, string>({
   key: 'plants',
-  default: data,
+  default: { name: 'default??' },
+});
+
+const plantIdsState = atom<string[]>({
+  key: 'plantIds',
+  default: [],
 });
 
 /*
  * CONTRACT BETWEEN STORE AND COMPONENT - DO NOT MODIFY THE PARAMETERS OR RETURN SHAPE
  */
+
+export function useFetchInitialData() {
+  const setInitialPlants = useRecoilCallback(
+    ({ set }) =>
+      (plants: Plants) => {
+        Object.keys(plants).forEach((id) => {
+          set(plantsState(id), plants[id]);
+        });
+      },
+    []
+  );
+
+  const setPlantIds = useSetRecoilState(plantIdsState);
+  useEffect(() => {
+    setInitialPlants(data);
+    setPlantIds(Object.keys(data));
+  }, []);
+}
+
 export function usePlants() {
-  const plants = useRecoilValue(plantsState);
-  return plants;
+  const plantIds = useRecoilValue(plantIdsState);
+  return plantIds.reduce((acc, id) => {
+    return {
+      ...acc,
+      [id]: undefined,
+    };
+  }, {});
 }
 
 export function usePlant(id: string) {
-  const plants = useRecoilValue(plantsState);
-  return plants[id];
+  const plant = useRecoilValue(plantsState(id));
+  return plant;
 }
 
 export function useAddPlant() {
   const plants = usePlants();
-  const setPlants = useSetRecoilState(plantsState);
+  const id = generateNextId(plants);
+  const setPlant = useSetRecoilState(plantsState(id));
+  const [plantIds, setPlantIds] = useRecoilState(plantIdsState);
   return (plant: Plant) => {
-    const id = generateNextId(plants);
-    setPlants({ ...plants, [id]: plant });
+    setPlant(plant as any);
+    setPlantIds([...plantIds, id]);
   };
 }
 
 export function useDeletePlant(id: string) {
-  const plants = usePlants();
-  const setPlants = useSetRecoilState(plantsState);
-  const plantsCopy = { ...plants }; // Need to make a copy here because the return of recoil is a read-only object
+  const deletePlant = useResetRecoilState(plantsState(id));
+  const [plantIds, setPlantIds] = useRecoilState(plantIdsState);
   return () => {
-    delete plantsCopy[id];
-    setPlants(plantsCopy);
+    deletePlant();
+    setPlantIds(plantIds.filter((plantId) => plantId !== id));
   };
 }
 
 export function useUpdatePlant(id: string) {
-  const plants = usePlants();
-  const setPlants = useSetRecoilState(plantsState);
-  const plantsCopy = { ...plants }; // Need to make a copy here because the return of recoil is a read-only object
+  const oldPlant = usePlant(id);
+  const setPlant = useSetRecoilState(plantsState(id));
   return (plant: Partial<Plant>) => {
-    plantsCopy[id] = { ...plantsCopy[id], ...plant };
-    setPlants(plantsCopy);
+    setPlant({ ...oldPlant, ...plant });
   };
 }
