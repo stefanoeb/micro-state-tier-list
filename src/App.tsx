@@ -2,28 +2,31 @@ import './App.css';
 import React from 'react';
 import * as none from './state-handlers/_none';
 import * as recoil from './state-handlers/recoil';
+import * as jotai from './state-handlers/jotai';
 import * as zustand from './state-handlers/zustand';
 
-
-
-let store: any = none
+let store: any = none;
 switch (window.location.pathname) {
   case '/recoil':
-    console.log('[INFO] Using Recoil')
+    console.log('[INFO] Using Recoil');
     store = recoil;
     break;
-    case '/zustand':
-      console.log('[INFO] Using Zustand')
-      store = zustand;
-      break;
+  case '/zustand':
+    console.log('[INFO] Using Zustand');
+    store = zustand;
+    break;
+  case '/jotai':
+    console.log('[INFO] Using Jotai');
+    store = jotai;
+    break;
   default:
-    console.log('[INFO] Using no state management')
+    console.log('[INFO] Using no state management');
     break;
 }
 
 function App() {
   const plants = store.usePlants();
-  store.useFetchInitialData()
+  store.useFetchInitialData();
   return (
     <div style={{ padding: 30 }}>
       <div>
@@ -40,7 +43,7 @@ function App() {
         }}
       >
         {Object.keys(plants).map((plantId) => {
-          return <Item id={plantId} key={plantId}/>;
+          return <Item id={plantId} key={plantId} />;
         })}
       </div>
     </div>
@@ -66,7 +69,7 @@ const Item = React.memo(function (props: { id: string }) {
       <DeleteButton id={props.id} />
     </div>
   );
-})
+});
 
 function AddButton() {
   const [name, setName] = React.useState('');
@@ -74,7 +77,7 @@ function AddButton() {
   return (
     <div>
       <input
-        style={{marginRight: 10}}
+        style={{ marginRight: 10 }}
         type="text"
         value={name}
         onChange={(e) => setName(e.target.value)}
