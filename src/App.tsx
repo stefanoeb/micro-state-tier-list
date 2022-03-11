@@ -2,6 +2,7 @@ import './App.css';
 import React from 'react';
 import * as none from './state-handlers/_none';
 import * as recoil from './state-handlers/recoil';
+import * as zustand from './state-handlers/zustand';
 
 
 
@@ -11,6 +12,10 @@ switch (window.location.pathname) {
     console.log('[INFO] Using Recoil')
     store = recoil;
     break;
+    case '/zustand':
+      console.log('[INFO] Using Zustand')
+      store = zustand;
+      break;
   default:
     console.log('[INFO] Using no state management')
     break;
