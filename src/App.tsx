@@ -4,25 +4,32 @@ import * as none from './state-handlers/_none';
 import * as recoil from './state-handlers/recoil';
 import * as jotai from './state-handlers/jotai';
 import * as zustand from './state-handlers/zustand';
+import * as hookstate from './state-handlers/hookstate';
 
 let store: any = none;
+let storeName: string = 'Nothing';
 switch (window.location.pathname) {
   case '/recoil':
-    console.log('[INFO] Using Recoil');
+    storeName = 'Recoil';
     store = recoil;
     break;
   case '/zustand':
-    console.log('[INFO] Using Zustand');
+    storeName = 'Zustand';
     store = zustand;
     break;
   case '/jotai':
-    console.log('[INFO] Using Jotai');
+    storeName = 'Jotai';
     store = jotai;
     break;
+  case '/hookstate':
+    storeName = 'Hookstate';
+    store = hookstate;
+    break;
   default:
-    console.log('[INFO] Using no state management');
     break;
 }
+
+console.log(`[INFO] Using ${storeName}`);
 
 function App() {
   const plants = store.usePlants();
@@ -31,7 +38,7 @@ function App() {
     <div style={{ padding: 30 }}>
       <div>
         <h1>Plant directory</h1>
-        <p>Open your console!</p>
+        <p>Currently using {storeName} as the state manager</p>
         <AddButton />
       </div>
       <div
@@ -50,7 +57,7 @@ function App() {
   );
 }
 
-const Item = React.memo(function (props: { id: string }) {
+const Item = React.memo(function Item(props: { id: string }) {
   const plant = store.usePlant(props.id);
   return (
     <div
