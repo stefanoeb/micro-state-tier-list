@@ -5,6 +5,7 @@ import * as recoil from './state-handlers/recoil';
 import * as jotai from './state-handlers/jotai';
 import * as zustand from './state-handlers/zustand';
 import * as hookstate from './state-handlers/hookstate';
+import * as redux from './state-handlers/redux-toolkit';
 
 let store: any = none;
 let storeName: string = 'Nothing';
@@ -24,6 +25,10 @@ switch (window.location.pathname) {
   case '/hookstate':
     storeName = 'Hookstate';
     store = hookstate;
+    break;
+  case '/redux':
+    storeName = 'Redux';
+    store = redux;
     break;
   default:
     break;
