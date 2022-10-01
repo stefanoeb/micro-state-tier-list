@@ -6,6 +6,8 @@ import * as jotai from './state-handlers/jotai';
 import * as zustand from './state-handlers/zustand';
 import * as hookstate from './state-handlers/hookstate';
 import * as redux from './state-handlers/redux-toolkit';
+import * as mobx from './state-handlers/mobx';
+import { observer } from 'mobx-react';
 
 let store: any = none;
 let storeName: string = 'Nothing';
@@ -30,6 +32,10 @@ switch (window.location.pathname) {
     storeName = 'Redux';
     store = redux;
     break;
+  case '/mobx':
+    storeName = 'Mobx';
+    store = mobx;
+    break;
   default:
     break;
 }
@@ -42,7 +48,17 @@ function App() {
   return (
     <div style={{ padding: 30 }}>
       <div>
+        <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
         <h1>Plant directory</h1>
+        <div>
+          <a style={{marginRight: 10}} href="/recoil">Recoil</a>
+          <a style={{marginRight: 10}} href="/zustand">Zustand</a>
+          <a style={{marginRight: 10}} href="/jotai">Jotai</a>
+          <a style={{marginRight: 10}} href="/hookstate">Hookstate</a>
+          <a style={{marginRight: 10}} href="/redux">Redux</a>
+          <a style={{marginRight: 10}} href="/mobx">Mobx</a>
+        </div>
+        </div>
         <p>Currently using {storeName} as the state manager</p>
         <AddButton />
       </div>
@@ -167,4 +183,4 @@ function UpdateButton(props: { id: string; name: string }) {
   );
 }
 
-export default App;
+export default observer(App);

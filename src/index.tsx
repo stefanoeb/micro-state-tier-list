@@ -4,12 +4,15 @@ import { Provider } from 'react-redux';
 import { RecoilRoot } from 'recoil';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { PlantsProviderMobx } from './state-handlers/mobx';
 import { store } from './state-handlers/redux-toolkit';
 
 ReactDOM.render(
   <Provider store={store}>
     <RecoilRoot>
-      <App />
+      <PlantsProviderMobx>
+        <App />
+      </PlantsProviderMobx>
     </RecoilRoot>
   </Provider>,
   document.getElementById('root')
